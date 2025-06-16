@@ -5,7 +5,6 @@
   <title>Pint Sized Fashions Gallery</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
-    /* ... your existing CSS ... */
     body {
       font-family: 'Fredoka One', cursive;
       background: #fff8f0;
@@ -154,19 +153,15 @@
   <script>
     // --- getImageUrl function: add this at the top of your script ---
     function getImageUrl(path) {
-      // If it's already a full URL, just use it
       if (/^(http|https):\/\//.test(path)) return path;
       if (!path) return '';
-      const repoName = 'Gallery'; // Change if your repo name is different
+      const repoName = 'Gallery';
       let base = '';
       if (window.location.hostname.endsWith('github.io')) {
-        // On GitHub Pages, site is served from /Gallery/
         base = '/' + repoName + '/';
       } else {
-        // On localhost, serve from root
         base = '/';
       }
-      // Remove any leading slashes from path to avoid double-slash
       path = path.replace(/^\/+/, '');
       return base + path;
     }
@@ -180,28 +175,14 @@
     const bulkItemsTextarea = document.getElementById('bulkItemsTextarea');
     let formUnlocked = false;
 
-    showBulkFormBtn.addEventListener('click', function() {
-      if (!formUnlocked) {
-        const entered = prompt("Enter password to add/remove items:");
-        if (entered === PASSWORD) {
-          formUnlocked = true;
-          bulkFormContainer.style.display = 'block';
-          renderItems();
-        } else {
-          alert("Incorrect password!");
-        }
-      } else {
-        bulkFormContainer.style.display = bulkFormContainer.style.display === 'block' ? 'none' : 'block';
-      }
-    });
-
-    cancelBulkBtn.addEventListener('click', function() {
-      bulkFormContainer.style.display = 'none';
-      resetBulkForm();
-    });
-
     // --- ITEM PERSISTENCE ---
-    let items = JSON.parse(localStorage.getItem('psf_items') || '[]');
+    let items = [];
+    try {
+      items = JSON.parse(localStorage.getItem('psf_items') || '[]');
+      if (!Array.isArray(items)) items = [];
+    } catch (e) {
+      items = [];
+    }
 
     // --- PRODUCT LIST RENDER ---
     const itemList = document.getElementById('itemList');
@@ -243,15 +224,33 @@
         });
       }
     }
-    renderItems();
 
     // --- BULK ADD FUNCTIONALITY ---
     function resetBulkForm() {
       bulkItemsTextarea.value = JSON.stringify(items, null, 2);
     }
-    if (bulkItemsTextarea) {
+
+    showBulkFormBtn.addEventListener('click', function() {
+      if (!formUnlocked) {
+        const entered = prompt("Enter password to add/remove items:");
+        if (entered === PASSWORD) {
+          formUnlocked = true;
+          bulkFormContainer.style.display = 'block';
+          resetBulkForm();
+          renderItems(); // show remove buttons now
+        } else {
+          alert("Incorrect password!");
+        }
+      } else {
+        bulkFormContainer.style.display = bulkFormContainer.style.display === 'block' ? 'none' : 'block';
+        resetBulkForm();
+      }
+    });
+
+    cancelBulkBtn.addEventListener('click', function() {
+      bulkFormContainer.style.display = 'none';
       resetBulkForm();
-    }
+    });
 
     addBulkBtn.addEventListener('click', function() {
       let arr;
@@ -268,6 +267,9 @@
       bulkFormContainer.style.display = 'none';
     });
 
+    // --- INITIAL RENDER ---
+    renderItems();
   </script>
 </body>
 </html>
+    
