@@ -6,10 +6,151 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
     /* ... your existing CSS ... */
+    body {
+      font-family: 'Fredoka One', cursive;
+      background: #fff8f0;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #f17c57;
+      margin-top: 24px;
+    }
+    #itemList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 24px auto;
+      gap: 24px;
+      max-width: 1100px;
+    }
+    .item {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px #eac6b1;
+      padding: 20px;
+      width: 220px;
+      text-align: center;
+      transition: box-shadow 0.2s;
+    }
+    .item:hover {
+      box-shadow: 0 8px 24px #eac6b1;
+    }
+    .item-image {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #f9e0d3;
+      margin-bottom: 10px;
+    }
+    .item-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #f17c57;
+      margin-bottom: 6px;
+    }
+    .item-desc {
+      font-size: 0.95em;
+      color: #777;
+      margin-bottom: 8px;
+    }
+    .item-price {
+      font-size: 1em;
+      color: #44bfa3;
+      margin-bottom: 8px;
+    }
+    .order-btn, .remove-btn {
+      background: #f17c57;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin: 4px 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .order-btn:hover, .remove-btn:hover {
+      background: #44bfa3;
+    }
+    #showBulkFormBtn {
+      display: block;
+      margin: 32px auto 16px auto;
+      background: #44bfa3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05em;
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #showBulkFormBtn:hover {
+      background: #f17c57;
+    }
+    #bulkFormContainer {
+      display: none;
+      background: #fffdfa;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px #eac6b1;
+      padding: 26px;
+      max-width: 500px;
+      margin: 20px auto 20px auto;
+      text-align: left;
+    }
+    #bulkItemsTextarea {
+      width: 100%;
+      min-height: 80px;
+      font-size: 1em;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid #eac6b1;
+      padding: 8px;
+    }
+    #addBulkBtn, #cancelBulkBtn {
+      background: #f17c57;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin: 4px 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #addBulkBtn:hover, #cancelBulkBtn:hover {
+      background: #44bfa3;
+    }
+    @media (max-width: 700px) {
+      .item {
+        width: 90vw;
+        max-width: 340px;
+      }
+      #itemList {
+        gap: 12px;
+      }
+      #bulkFormContainer {
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- ... your existing HTML ... -->
+  <h1>Pint Sized Fashions Gallery</h1>
+  <button id="showBulkFormBtn">Show Bulk Form</button>
+  <div id="bulkFormContainer">
+    <h2>Bulk Add/Edit Items</h2>
+    <p>Enter items as JSON array:<br>
+    <small>Example: <code>[{"name":"Dress","description":"Pink","price":12.00,"imageUrl":"images/dress.jpg"}]</code></small></p>
+    <textarea id="bulkItemsTextarea" placeholder='[{"name":"Dress","description":"Pink..."></textarea>
+    <br>
+    <button id="addBulkBtn">Save Items</button>
+    <button id="cancelBulkBtn">Cancel</button>
+  </div>
+  <div id="itemList"></div>
   <script>
     // --- getImageUrl function: add this at the top of your script ---
     function getImageUrl(path) {
@@ -35,6 +176,8 @@
     const showBulkFormBtn = document.getElementById('showBulkFormBtn');
     const bulkFormContainer = document.getElementById('bulkFormContainer');
     const cancelBulkBtn = document.getElementById('cancelBulkBtn');
+    const addBulkBtn = document.getElementById('addBulkBtn');
+    const bulkItemsTextarea = document.getElementById('bulkItemsTextarea');
     let formUnlocked = false;
 
     showBulkFormBtn.addEventListener('click', function() {
@@ -103,7 +246,28 @@
     renderItems();
 
     // --- BULK ADD FUNCTIONALITY ---
-    // ... rest of your JavaScript unchanged ...
+    function resetBulkForm() {
+      bulkItemsTextarea.value = JSON.stringify(items, null, 2);
+    }
+    if (bulkItemsTextarea) {
+      resetBulkForm();
+    }
+
+    addBulkBtn.addEventListener('click', function() {
+      let arr;
+      try {
+        arr = JSON.parse(bulkItemsTextarea.value);
+        if (!Array.isArray(arr)) throw new Error();
+      } catch (e) {
+        alert("Invalid JSON! Please enter a valid array of items.");
+        return;
+      }
+      items = arr;
+      localStorage.setItem('psf_items', JSON.stringify(items));
+      renderItems();
+      bulkFormContainer.style.display = 'none';
+    });
+
   </script>
 </body>
 </html>
