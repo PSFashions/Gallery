@@ -5,62 +5,31 @@
   <title>Pint Sized Fashions Gallery</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #fdf6e3 0%, #f7c6e0 100%); margin: 0; padding: 0; min-height: 100vh; }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; position: relative; padding: 0 18px; height: 64px; margin-bottom: 8px;}
-    .admin-btn { font-size:1rem; background:#a03a7e; color:#fff; border:none; border-radius:0 0 14px 0; cursor:pointer; box-shadow:0 2px 6px rgba(160,58,126,0.13); font-family:'Fredoka One',cursive,sans-serif; padding:12px 22px; margin:0;}
-    .order-form-btn { font-size:1rem; background:#ffb703; color:#7c2d61; border:none; border-radius:0 0 0 14px; cursor:pointer; box-shadow:0 2px 6px rgba(255,183,3,0.13); font-family:'Fredoka One',cursive,sans-serif; padding:12px 22px; margin:0; transition:background 0.2s;}
-    .order-form-btn:hover { background:#ffd166; color:#a03a7e;}
-    .center-heading { flex:1 1 auto; text-align:center; color:#a03a7e; letter-spacing:2px; font-family:'Fredoka One','Comic Sans MS',cursive,sans-serif; font-size:3.2rem; text-shadow:2px 2px 8px #fff7fb,1px 1px 0 #f7c6e0; margin:0; pointer-events:none; user-select:none; z-index:0;}
-    @media (max-width:600px){.top-bar{flex-direction:column;height:auto;gap:4px;padding:0 6px;}.center-heading{font-size:2rem;}.admin-btn,.order-form-btn{padding:8px 12px;font-size:0.93rem;}}
-    .bulk-form-container { display: none; background: #f4f4f4; border: 1px solid #aaa; border-radius: 8px; max-width: 95vw; margin: 24px auto; padding: 18px 24px; box-shadow: 0 4px 16px #f7c6e0aa;}
-    #bulkItemForm button { margin-top:12px; margin-right:8px; padding:7px 18px; border-radius:5px; border:none; background:#a03a7e; color:#fff; font-size:1rem; cursor:pointer;}
-    #bulkItemForm button[type="button"] { background:#bbb; color:#333; }
-    #bulkTable { width:100%; border-collapse:collapse; margin-bottom:16px; font-size:1rem;}
-    #bulkTable th,#bulkTable td { border:1px solid #bbb; padding:8px; text-align:center; background:#fff;}
-    #bulkTable th { background:#f7c6e0; color:#a03a7e; font-family:'Fredoka One',cursive,sans-serif; font-size:1.1rem;}
-    #bulkTable input[type="text"], #bulkTable input[type="number"] { width:100%; box-sizing:border-box;}
-    .remove-btn { background:#e53935; color:#fff; border:none; padding:7px 18px; border-radius:5px; font-size:1rem; cursor:pointer; transition:background 0.2s;}
-    .remove-btn:hover{ background:#b71c1c;}
-    .item-list{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:40px;}
-    .item{border:1px solid #ccc;border-radius:16px;padding:18px 14px 18px 14px;display:flex;flex-direction:column;align-items:center;min-width:240px;max-width:240px;background:#fff;box-shadow:0 2px 8px rgba(160,58,126,0.10);position:relative;}
-    .item-image{width:200px;height:200px;object-fit:contain;margin-bottom:10px;border:2px solid #ccc;border-radius:8px;background:#fafafa;}
-    .item-name{font-weight:bold;margin-bottom:4px;text-align:center;color:#a03a7e;font-family:'Fredoka One',cursive,sans-serif;font-size:1.25rem;}
-    .item-desc{margin-bottom:4px;text-align:center;color:#555;font-size:1rem;}
-    .item-price{margin-bottom:12px;color:#222;font-weight:bold;}
-    .order-btn{background:#a03a7e;color:#fff;border:none;padding:8px 20px;border-radius:5px;font-size:1rem;cursor:pointer;margin-top:4px;transition:background 0.2s;}
-    .order-btn:hover{background:#7c2d61;}
-    @media (max-width:600px){#bulkTable th,#bulkTable td{font-size:0.93rem;padding:4px;}.item-list{gap:12px;}.item{min-width:90vw;max-width:98vw;}.item-image{width:90vw;max-width:250px;height:40vw;max-height:250px;}}
+    /* ... your existing CSS ... */
   </style>
 </head>
 <body>
-  <div class="top-bar">
-    <button class="admin-btn" id="showBulkFormBtn">Admin Use Only</button>
-    <h1 class="center-heading">Pint Sized Fashions Gallery</h1>
-    <button class="order-form-btn" onclick="window.open('https://psfashions.github.io/PintSizedFashions/Order%20Form.html', '_blank')">ORDER FORM</button>
-  </div>
-  <div class="bulk-form-container" id="bulkFormContainer">
-    <form id="bulkItemForm">
-      <table id="bulkTable">
-        <thead>
-          <tr>
-            <th>Image URL/Path<br><span style="font-weight:normal;font-size:0.9em;">(pasteable)</span></th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Rows added dynamically -->
-        </tbody>
-      </table>
-      <button type="button" id="addRowBtn">Add Row</button>
-      <button type="submit">Add Products</button>
-      <button type="button" id="cancelBulkBtn">Cancel</button>
-    </form>
-  </div>
-  <div class="item-list" id="itemList"></div>
+  <!-- ... your existing HTML ... -->
   <script>
+    // --- getImageUrl function: add this at the top of your script ---
+    function getImageUrl(path) {
+      // If it's already a full URL, just use it
+      if (/^(http|https):\/\//.test(path)) return path;
+      if (!path) return '';
+      const repoName = 'Gallery'; // Change if your repo name is different
+      let base = '';
+      if (window.location.hostname.endsWith('github.io')) {
+        // On GitHub Pages, site is served from /Gallery/
+        base = '/' + repoName + '/';
+      } else {
+        // On localhost, serve from root
+        base = '/';
+      }
+      // Remove any leading slashes from path to avoid double-slash
+      path = path.replace(/^\/+/, '');
+      return base + path;
+    }
+
     // --- PASSWORD PROTECTION ---
     const PASSWORD = "PSFPa55word!";
     const showBulkFormBtn = document.getElementById('showBulkFormBtn');
@@ -99,7 +68,7 @@
         const div = document.createElement('div');
         div.className = 'item';
         div.innerHTML = `
-          <img class="item-image" src="${item.imageUrl ? item.imageUrl : ''}" alt="Item Image">
+          <img class="item-image" src="${getImageUrl(item.imageUrl ? item.imageUrl : '')}" alt="Item Image">
           <div class="item-name">${item.name}</div>
           <div class="item-desc">${item.description}</div>
           <div class="item-price">$${item.price ? parseFloat(item.price).toFixed(2) : ''}</div>
@@ -134,123 +103,7 @@
     renderItems();
 
     // --- BULK ADD FUNCTIONALITY ---
-    const bulkTableBody = document.querySelector('#bulkTable tbody');
-    const addRowBtn = document.getElementById('addRowBtn');
-    const bulkItemForm = document.getElementById('bulkItemForm');
-
-    function createBulkRow() {
-      const row = document.createElement('tr');
-      // Image URL/Path input (pasteable!)
-      const imageCell = document.createElement('td');
-      const imageInput = document.createElement('input');
-      imageInput.type = 'text';
-      imageInput.placeholder = 'Paste image URL or path';
-      imageInput.required = false;
-      imageCell.appendChild(imageInput);
-      // Name input
-      const nameCell = document.createElement('td');
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.required = true;
-      nameCell.appendChild(nameInput);
-      // Desc input
-      const descCell = document.createElement('td');
-      const descInput = document.createElement('input');
-      descInput.type = 'text';
-      descInput.required = true;
-      descCell.appendChild(descInput);
-      // Price input
-      const priceCell = document.createElement('td');
-      const priceInput = document.createElement('input');
-      priceInput.type = 'number';
-      priceInput.min = '0';
-      priceInput.step = '0.01';
-      priceInput.required = true;
-      priceCell.appendChild(priceInput);
-      // Remove button
-      const removeCell = document.createElement('td');
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.textContent = 'Remove';
-      removeBtn.className = 'remove-btn';
-      removeBtn.onclick = () => row.remove();
-      removeCell.appendChild(removeBtn);
-      row.appendChild(imageCell);
-      row.appendChild(nameCell);
-      row.appendChild(descCell);
-      row.appendChild(priceCell);
-      row.appendChild(removeCell);
-      return row;
-    }
-
-    function resetBulkForm() {
-      bulkTableBody.innerHTML = '';
-      bulkTableBody.appendChild(createBulkRow());
-    }
-
-    addRowBtn.addEventListener('click', function() {
-      bulkTableBody.appendChild(createBulkRow());
-    });
-
-    bulkItemForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const rows = Array.from(bulkTableBody.querySelectorAll('tr'));
-      if (!rows.length) return;
-      rows.forEach(row => {
-        const [imgInput, nameInput, descInput, priceInput] = row.querySelectorAll('input');
-        const imageUrl = imgInput.value.trim();
-        const name = nameInput.value.trim();
-        const description = descInput.value.trim();
-        const price = parseFloat(priceInput.value);
-        if (name && description && !isNaN(price)) {
-          items.push({ name, description, price, imageUrl });
-        }
-      });
-      localStorage.setItem('psf_items', JSON.stringify(items));
-      renderItems();
-      bulkFormContainer.style.display = 'none';
-      resetBulkForm();
-      bulkItemForm.reset();
-    });
-
-    // Allow multi-row/col pasting (Excel/Sheets copy) into the table
-    bulkTableBody.addEventListener('paste', function(e) {
-      const clipboardData = (e.clipboardData || window.clipboardData);
-      const pastedData = clipboardData.getData('text');
-      if (!pastedData) return;
-      const startCell = document.activeElement;
-      if (!startCell || startCell.tagName !== 'INPUT') return;
-      // Find starting position
-      let startRowElem = startCell.closest('tr');
-      let allRows = Array.from(bulkTableBody.querySelectorAll('tr'));
-      let rowIdx = allRows.indexOf(startRowElem);
-      let cellIdx = Array.from(startRowElem.querySelectorAll('input')).indexOf(startCell);
-      // Parse grid
-      const rows = pastedData.trim().split('\n').map(row => row.split('\t'));
-      // For each row in the paste data
-      for (let r = 0; r < rows.length; r++) {
-        let currentRow = bulkTableBody.querySelectorAll('tr')[rowIdx + r];
-        // If not enough rows, add rows
-        if (!currentRow) {
-          currentRow = createBulkRow();
-          bulkTableBody.appendChild(currentRow);
-        }
-        const cells = Array.from(currentRow.querySelectorAll('input[type="text"],input[type="number"]'));
-        for (let c = 0; c < rows[r].length && (cellIdx + c) < 4; c++) {
-          // Only fill the first 4 cells (imageURL, name, desc, price)
-          let val = rows[r][c];
-          if (cells[cellIdx + c]) {
-            cells[cellIdx + c].value = cells[cellIdx + c].type === "number"
-              ? val.replace(/[^0-9.]/g, '')
-              : val;
-          }
-        }
-      }
-      e.preventDefault();
-    });
-
-    // Initial state: form hidden, single row ready
-    resetBulkForm();
+    // ... rest of your JavaScript unchanged ...
   </script>
 </body>
 </html>
