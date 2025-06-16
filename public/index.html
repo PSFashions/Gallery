@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pint Sized Fashions Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fcfcfc;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 32px;
+      margin-bottom: 32px;
+      color: #a03a7e;
+      letter-spacing: 2px;
+    }
+    .add-btn {
+      display: block;
+      margin: 0 auto 24px auto;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #a03a7e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #itemForm {
+      display: none;
+      margin: 0 auto 32px auto;
+      border: 1px solid #aaa;
+      padding: 18px 24px;
+      border-radius: 8px;
+      background: #f4f4f4;
+      max-width: 400px;
+    }
+    #itemForm label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    #itemForm input[type="text"],
+    #itemForm input[type="number"] {
+      width: 100%;
+      margin-top: 2px;
+      margin-bottom: 12px;
+      padding: 7px 5px;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+    }
+    #itemForm input[type="file"] {
+      margin-bottom: 12px;
+    }
+    #itemForm button {
+      margin-top: 12px;
+      margin-right: 8px;
+      padding: 7px 18px;
+      border-radius: 5px;
+      border: none;
+      background: #a03a7e;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #itemForm button[type="button"] {
+      background: #bbb;
+      color: #333;
+    }
+    .item-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .item {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 18px 14px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 240px;
+      max-width: 240px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(160,58,126,0.04);
+    }
+    .item-image {
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      background: #fafafa;
+    }
+    .item-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+      text-align: center;
+      color: #a03a7e;
+    }
+    .item-desc {
+      margin-bottom: 4px;
+      text-align: center;
+      color: #555;
+    }
+    .item-price {
+      margin-bottom: 12px;
+      color: #222;
+      font-weight: bold;
+    }
+    .order-btn {
+      background: #a03a7e;
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .order-btn:hover {
+      background: #7c2d61;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pint Sized Fashions Gallery</h1>
+
+  <button class="add-btn" id="showFormBtn">Add Item (Password Protected)</button>
+
+  <form id="itemForm" enctype="multipart/form-data">
+    <label>
+      Picture:
+      <input type="file" id="itemImage" accept="image/*" required>
+    </label>
+    <label>
+      Name:
+      <input type="text" id="itemName" required>
+    </label>
+    <label>
+      Description:
+      <input type="text" id="itemDescription" required>
+    </label>
+    <label>
+      Price:
+      <input type="number" id="itemPrice" required min="0" step="0.01">
+    </label>
+    <button type="submit">Add Item</button>
+    <button type="button" id="cancelFormBtn">Cancel</button>
+  </form>
+
+  <div class="item-list" id="itemList"></div>
+
+  <script>
+    // --- PASSWORD PROTECTION ---
+    const PASSWORD = "PSFPa55word!";
+    const showFormBtn = document.getElementById('showFormBtn');
+    const itemForm = document.getElementById('itemForm');
+    const cancelFormBtn = document.getElementById('cancelFormBtn');
+    let formUnlocked = false;
+
+    showFormBtn.addEventListener('click', function() {
+      if (!formUnlocked) {
+        const entered = prompt("Enter password to add items:");
+        if (entered === PASSWORD) {
+          formUnlocked = true;
+          itemForm.style.display = 'block';
+        } else {
+          alert("Incorrect password!");
+        }
+      } else {
+        itemForm.style.display = 'block';
+      }
+    });
+
+    cancelFormBtn.addEventListener('click', function() {
+      itemForm.style.display = 'none';
+      document.getElementById('itemForm').reset();
+    });
+
+    // --- ITEM FORM LOGIC ---
+    const itemList = document.getElementById('itemList');
+    const items = [];
+
+    itemForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('itemName').value.trim();
+      const description = document.getElementById('itemDescription').value.trim();
+      const price = parseFloat(document.getElementById('itemPrice').value);
+      const imageInput = document.getElementById('itemImage');
+      const file = imageInput.files[0];
+
+      if (name && description && !isNaN(price) && file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const imageUrl = ev.target.result;
+          items.push({ name, description, price, imageUrl });
+          renderItems();
+          itemForm.reset();
+          itemForm.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function renderItems() {
+      itemList.innerHTML = '';
+      items.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img class="item-image" src="${item.imageUrl}" alt="Item Image">
+          <div class="item-name">${item.name}</div>
+          <div class="item-desc">${item.description}</div>
+          <div class="item-price">$${item.price.toFixed(2)}</div>
+          <button class="order-btn" data-name="${encodeURIComponent(item.name)}">Order</button>
+        `;
+        itemList.appendChild(div);
+      });
+
+      // Add event listeners for order buttons
+      document.querySelectorAll('.order-btn').forEach(btn => {
+        btn.onclick = function(e) {
+          const itemName = decodeURIComponent(this.getAttribute('data-name'));
+          // Try to use localStorage for cross-tab copy (Order Form page must read it)
+          try {
+            localStorage.setItem('psf_item_name', itemName);
+          } catch (err) {}
+          // Build redirect URL (try to prefill name as query param for the form, if supported)
+          const orderUrl = `https://psfashions.github.io/PintSizedFashions/Order%20Form.html?item=${encodeURIComponent(itemName)}`;
+          window.location.href = orderUrl;
+        };
+      });
+    }
+  </script>
+</body>
+</html>
