@@ -5,65 +5,120 @@
   <title>Pint Sized Fashions Gallery</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
   <style>
-    /* ... your existing CSS ... */
+    body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #fdf6e3 0%, #f7c6e0 100%); margin: 0; padding: 0; min-height: 100vh; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; position: relative; padding: 0 18px; height: 64px; margin-bottom: 8px;}
+    .admin-btn { font-size:1rem; background:#a03a7e; color:#fff; border:none; border-radius:0 0 14px 0; cursor:pointer; box-shadow:0 2px 6px rgba(160,58,126,0.13); font-family:'Fredoka One',cursive,sans-serif; padding:12px 22px; margin:0;}
+    .order-form-btn { font-size:1rem; background:#ffb703; color:#7c2d61; border:none; border-radius:0 0 0 14px; cursor:pointer; box-shadow:0 2px 6px rgba(255,183,3,0.13); font-family:'Fredoka One',cursive,sans-serif; padding:12px 22px; margin:0; transition:background 0.2s;}
+    .order-form-btn:hover { background:#ffd166; color:#a03a7e;}
+    .center-heading { flex:1 1 auto; text-align:center; color:#a03a7e; letter-spacing:2px; font-family:'Fredoka One','Comic Sans MS',cursive,sans-serif; font-size:3.2rem; text-shadow:2px 2px 8px #fff7fb,1px 1px 0 #f7c6e0; margin:0; pointer-events:none; user-select:none; z-index:0;}
+    @media (max-width:600px){.top-bar{flex-direction:column;height:auto;gap:4px;padding:0 6px;}.center-heading{font-size:2rem;}.admin-btn,.order-form-btn{padding:8px 12px;font-size:0.93rem;}}
+    .admin-panel { background: #f4f4f4; border: 1px solid #aaa; border-radius: 8px; max-width: 95vw; margin: 24px auto; padding: 18px 24px; box-shadow: 0 4px 16px #f7c6e0aa; display:none;}
+    .admin-panel.active { display: block; }
+    .admin-panel h2 { margin-top: 0; color: #a03a7e; }
+    .admin-panel table { width: 100%; border-collapse: collapse; margin-bottom: 12px;}
+    .admin-panel th, .admin-panel td { border: 1px solid #bbb; padding: 8px; text-align: center; background: #fff;}
+    .admin-panel th { background: #f7c6e0; color: #a03a7e; font-family: 'Fredoka One',cursive,sans-serif; font-size: 1.1rem;}
+    .admin-panel input[type="text"], .admin-panel input[type="number"] { width: 100%; box-sizing: border-box;}
+    .remove-btn { background:#e53935; color:#fff; border:none; padding:7px 18px; border-radius:5px; font-size:1rem; cursor:pointer; transition:background 0.2s;}
+    .remove-btn:hover{ background:#b71c1c;}
+    .add-row-btn, .download-btn, .save-btn { margin-top:12px; margin-right:8px; padding:7px 18px; border-radius:5px; border:none; background:#a03a7e; color:#fff; font-size:1rem; cursor:pointer;}
+    .add-row-btn { background: #bbb; color: #333; }
+    .item-list{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:40px;}
+    .item{border:1px solid #ccc;border-radius:16px;padding:18px 14px 18px 14px;display:flex;flex-direction:column;align-items:center;min-width:240px;max-width:240px;background:#fff;box-shadow:0 2px 8px rgba(160,58,126,0.10);position:relative;}
+    .item-image{width:200px;height:200px;object-fit:contain;margin-bottom:10px;border:2px solid #ccc;border-radius:8px;background:#fafafa;}
+    .item-name{font-weight:bold;margin-bottom:4px;text-align:center;color:#a03a7e;font-family:'Fredoka One',cursive,sans-serif;font-size:1.25rem;}
+    .item-desc{margin-bottom:4px;text-align:center;color:#555;font-size:1rem;}
+    .item-price{margin-bottom:12px;color:#222;font-weight:bold;}
+    .order-btn{background:#a03a7e;color:#fff;border:none;padding:8px 20px;border-radius:5px;font-size:1rem;cursor:pointer;margin-top:4px;transition:background 0.2s;}
+    .order-btn:hover{background:#7c2d61;}
+    @media (max-width:600px){.admin-panel th,.admin-panel td{font-size:0.93rem;padding:4px;}.item-list{gap:12px;}.item{min-width:90vw;max-width:98vw;}.item-image{width:90vw;max-width:250px;height:40vw;max-height:250px;}}
   </style>
 </head>
 <body>
-  <!-- ... your existing HTML ... -->
+  <div class="top-bar">
+    <button class="admin-btn" id="showAdminBtn">Admin Use Only</button>
+    <h1 class="center-heading">Pint Sized Fashions Gallery</h1>
+    <button class="order-form-btn" onclick="window.open('https://psfashions.github.io/PintSizedFashions/Order%20Form.html', '_blank')">ORDER FORM</button>
+  </div>
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin: Edit Products</h2>
+    <form id="adminForm">
+      <table>
+        <thead>
+          <tr>
+            <th>Image URL/Path</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+      <button type="button" class="add-row-btn" id="addAdminRowBtn">Add Row</button>
+      <button type="submit" class="save-btn">Update Products List (in browser)</button>
+      <button type="button" class="download-btn" id="downloadJsonBtn">Download Products JSON</button>
+      <button type="button" class="add-row-btn" id="closeAdminBtn">Close</button>
+    </form>
+    <div style="color:#a03a7e;font-size:0.95em;margin-top:8px;">
+      <strong>Instructions:</strong> After updating, click "Download Products JSON" and upload the file to your repo.<br>
+      Images: Use full URLs or paths like <code>images/yourfile.jpg</code> (upload images to your repo!).
+    </div>
+  </div>
+  <div class="item-list" id="itemList"></div>
   <script>
-    // --- getImageUrl function: add this at the top of your script ---
+    // --- CONFIG ---
+    const PASSWORD = "PSFPa55word!";
+    const PRODUCTS_FILE = "products.json";
+    const repoName = "Gallery"; // Change this if your repo name is not "Gallery"
+
+    // --- ELEMENTS ---
+    const showAdminBtn = document.getElementById('showAdminBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminTableBody = document.getElementById('adminTableBody');
+    const addAdminRowBtn = document.getElementById('addAdminRowBtn');
+    const adminForm = document.getElementById('adminForm');
+    const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+    const closeAdminBtn = document.getElementById('closeAdminBtn');
+    const itemList = document.getElementById('itemList');
+
+    // --- STATE ---
+    let items = [];
+    let formUnlocked = false;
+
+    // --- IMAGE URL RESOLVER ---
     function getImageUrl(path) {
-      // If it's already a full URL, just use it
       if (/^(http|https):\/\//.test(path)) return path;
       if (!path) return '';
-      const repoName = 'Gallery'; // Change if your repo name is different
       let base = '';
       if (window.location.hostname.endsWith('github.io')) {
-        // On GitHub Pages, site is served from /Gallery/
         base = '/' + repoName + '/';
       } else {
-        // On localhost, serve from root
         base = '/';
       }
-      // Remove any leading slashes from path to avoid double-slash
       path = path.replace(/^\/+/, '');
       return base + path;
     }
 
-    // --- PASSWORD PROTECTION ---
-    const PASSWORD = "PSFPa55word!";
-    const showBulkFormBtn = document.getElementById('showBulkFormBtn');
-    const bulkFormContainer = document.getElementById('bulkFormContainer');
-    const cancelBulkBtn = document.getElementById('cancelBulkBtn');
-    let formUnlocked = false;
-
-    showBulkFormBtn.addEventListener('click', function() {
-      if (!formUnlocked) {
-        const entered = prompt("Enter password to add/remove items:");
-        if (entered === PASSWORD) {
-          formUnlocked = true;
-          bulkFormContainer.style.display = 'block';
-          renderItems();
-        } else {
-          alert("Incorrect password!");
-        }
-      } else {
-        bulkFormContainer.style.display = bulkFormContainer.style.display === 'block' ? 'none' : 'block';
+    // --- LOAD PRODUCTS FROM JSON ---
+    async function loadProducts() {
+      try {
+        const response = await fetch(PRODUCTS_FILE, {cache: "no-store"});
+        if (!response.ok) throw new Error("Not found");
+        items = await response.json();
+      } catch (e) {
+        items = [];
       }
-    });
-
-    cancelBulkBtn.addEventListener('click', function() {
-      bulkFormContainer.style.display = 'none';
-      resetBulkForm();
-    });
-
-    // --- ITEM PERSISTENCE ---
-    let items = JSON.parse(localStorage.getItem('psf_items') || '[]');
+      renderItems();
+    }
 
     // --- PRODUCT LIST RENDER ---
-    const itemList = document.getElementById('itemList');
     function renderItems() {
       itemList.innerHTML = '';
+      if (!items.length) {
+        itemList.innerHTML = '<div style="font-size:1.3rem;color:#a03a7e;margin:30px;">No products available.</div>';
+        return;
+      }
       items.forEach((item, idx) => {
         const div = document.createElement('div');
         div.className = 'item';
@@ -73,7 +128,6 @@
           <div class="item-desc">${item.description}</div>
           <div class="item-price">$${item.price ? parseFloat(item.price).toFixed(2) : ''}</div>
           <button class="order-btn" data-name="${encodeURIComponent(item.name)}">Order</button>
-          ${formUnlocked ? `<button class="remove-btn" data-idx="${idx}">Remove</button>` : ""}
         `;
         itemList.appendChild(div);
       });
@@ -88,22 +142,117 @@
           window.open(orderUrl, '_blank');
         };
       });
-
-      if (formUnlocked) {
-        document.querySelectorAll('.remove-btn').forEach(btn => {
-          btn.onclick = function() {
-            const idx = parseInt(this.getAttribute('data-idx'));
-            items.splice(idx, 1);
-            localStorage.setItem('psf_items', JSON.stringify(items));
-            renderItems();
-          };
-        });
-      }
     }
-    renderItems();
 
-    // --- BULK ADD FUNCTIONALITY ---
-    // ... rest of your JavaScript unchanged ...
+    // --- ADMIN PANEL & TABLE RENDER ---
+    function renderAdminTable() {
+      adminTableBody.innerHTML = '';
+      if (!items.length) addAdminRow();
+      items.forEach((item, idx) => addAdminRow(item, idx));
+    }
+
+    function addAdminRow(item = {}, idx = null) {
+      const row = document.createElement('tr');
+      // Image URL/Path
+      const imageCell = document.createElement('td');
+      const imageInput = document.createElement('input');
+      imageInput.type = 'text';
+      imageInput.value = item.imageUrl || '';
+      imageCell.appendChild(imageInput);
+      // Name
+      const nameCell = document.createElement('td');
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.required = true;
+      nameInput.value = item.name || '';
+      nameCell.appendChild(nameInput);
+      // Desc
+      const descCell = document.createElement('td');
+      const descInput = document.createElement('input');
+      descInput.type = 'text';
+      descInput.required = true;
+      descInput.value = item.description || '';
+      descCell.appendChild(descInput);
+      // Price
+      const priceCell = document.createElement('td');
+      const priceInput = document.createElement('input');
+      priceInput.type = 'number';
+      priceInput.min = '0';
+      priceInput.step = '0.01';
+      priceInput.required = true;
+      priceInput.value = item.price || '';
+      priceCell.appendChild(priceInput);
+      // Remove button
+      const removeCell = document.createElement('td');
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.className = 'remove-btn';
+      removeBtn.onclick = () => row.remove();
+      removeCell.appendChild(removeBtn);
+      // Assemble row
+      row.appendChild(imageCell);
+      row.appendChild(nameCell);
+      row.appendChild(descCell);
+      row.appendChild(priceCell);
+      row.appendChild(removeCell);
+      adminTableBody.appendChild(row);
+    }
+
+    // --- ADMIN PANEL EVENTS ---
+    showAdminBtn.addEventListener('click', function() {
+      if (!formUnlocked) {
+        const entered = prompt("Enter password to access admin panel:");
+        if (entered === PASSWORD) {
+          formUnlocked = true;
+        } else {
+          alert("Incorrect password!");
+          return;
+        }
+      }
+      adminPanel.classList.add('active');
+      renderAdminTable();
+    });
+    closeAdminBtn.addEventListener('click', function() {
+      adminPanel.classList.remove('active');
+    });
+    addAdminRowBtn.addEventListener('click', function() {
+      addAdminRow();
+    });
+    // Save/Update in browser only (not persistent for all users)
+    adminForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      items = [];
+      Array.from(adminTableBody.querySelectorAll('tr')).forEach(row => {
+        const [imgInput, nameInput, descInput, priceInput] = row.querySelectorAll('input');
+        const imageUrl = imgInput.value.trim();
+        const name = nameInput.value.trim();
+        const description = descInput.value.trim();
+        const price = parseFloat(priceInput.value);
+        if (name && description && !isNaN(price)) {
+          items.push({ name, description, price, imageUrl });
+        }
+      });
+      renderAdminTable();
+      renderItems();
+      alert("Products updated in browser. Click 'Download Products JSON' and upload to your repo to make products visible to everyone.");
+    });
+    // Download products.json
+    downloadJsonBtn.addEventListener('click', function() {
+      const dataStr = JSON.stringify(items, null, 2);
+      const blob = new Blob([dataStr], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = PRODUCTS_FILE;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // --- INITIALIZE ---
+    loadProducts();
   </script>
 </body>
 </html>
