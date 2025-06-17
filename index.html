@@ -12,17 +12,15 @@
     .order-form-btn:hover { background:#ffd166; color:#a03a7e;}
     .center-heading { flex:1 1 auto; text-align:center; color:#a03a7e; letter-spacing:2px; font-family:'Fredoka One','Comic Sans MS',cursive,sans-serif; font-size:3.2rem; text-shadow:2px 2px 8px #fff7fb,1px 1px 0 #f7c6e0; margin:0; pointer-events:none; user-select:none; z-index:0;}
     @media (max-width:600px){.top-bar{flex-direction:column;height:auto;gap:4px;padding:0 6px;}.center-heading{font-size:2rem;}.admin-btn,.order-form-btn{padding:8px 12px;font-size:0.93rem;}}
-    .admin-panel { background: #f4f4f4; border: 1px solid #aaa; border-radius: 8px; max-width: 95vw; margin: 24px auto; padding: 18px 24px; box-shadow: 0 4px 16px #f7c6e0aa; display:none;}
-    .admin-panel.active { display: block; }
-    .admin-panel h2 { margin-top: 0; color: #a03a7e; }
-    .admin-panel table { width: 100%; border-collapse: collapse; margin-bottom: 12px;}
-    .admin-panel th, .admin-panel td { border: 1px solid #bbb; padding: 8px; text-align: center; background: #fff;}
-    .admin-panel th { background: #f7c6e0; color: #a03a7e; font-family: 'Fredoka One',cursive,sans-serif; font-size: 1.1rem;}
-    .admin-panel input[type="text"], .admin-panel input[type="number"] { width: 100%; box-sizing: border-box;}
+    .bulk-form-container { display: none; background: #f4f4f4; border: 1px solid #aaa; border-radius: 8px; max-width: 95vw; margin: 24px auto; padding: 18px 24px; box-shadow: 0 4px 16px #f7c6e0aa;}
+    #bulkItemForm button { margin-top:12px; margin-right:8px; padding:7px 18px; border-radius:5px; border:none; background:#a03a7e; color:#fff; font-size:1rem; cursor:pointer;}
+    #bulkItemForm button[type="button"] { background:#bbb; color:#333; }
+    #bulkTable { width:100%; border-collapse:collapse; margin-bottom:16px; font-size:1rem;}
+    #bulkTable th,#bulkTable td { border:1px solid #bbb; padding:8px; text-align:center; background:#fff;}
+    #bulkTable th { background:#f7c6e0; color:#a03a7e; font-family:'Fredoka One',cursive,sans-serif; font-size:1.1rem;}
+    #bulkTable input[type="text"], #bulkTable input[type="number"] { width:100%; box-sizing:border-box;}
     .remove-btn { background:#e53935; color:#fff; border:none; padding:7px 18px; border-radius:5px; font-size:1rem; cursor:pointer; transition:background 0.2s;}
     .remove-btn:hover{ background:#b71c1c;}
-    .add-row-btn, .download-btn, .save-btn { margin-top:12px; margin-right:8px; padding:7px 18px; border-radius:5px; border:none; background:#a03a7e; color:#fff; font-size:1rem; cursor:pointer;}
-    .add-row-btn { background: #bbb; color: #333; }
     .item-list{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:40px;}
     .item{border:1px solid #ccc;border-radius:16px;padding:18px 14px 18px 14px;display:flex;flex-direction:column;align-items:center;min-width:240px;max-width:240px;background:#fff;box-shadow:0 2px 8px rgba(160,58,126,0.10);position:relative;}
     .item-image{width:200px;height:200px;object-fit:contain;margin-bottom:10px;border:2px solid #ccc;border-radius:8px;background:#fafafa;}
@@ -31,38 +29,44 @@
     .item-price{margin-bottom:12px;color:#222;font-weight:bold;}
     .order-btn{background:#a03a7e;color:#fff;border:none;padding:8px 20px;border-radius:5px;font-size:1rem;cursor:pointer;margin-top:4px;transition:background 0.2s;}
     .order-btn:hover{background:#7c2d61;}
-    @media (max-width:600px){.admin-panel th,.admin-panel td{font-size:0.93rem;padding:4px;}.item-list{gap:12px;}.item{min-width:90vw;max-width:98vw;}.item-image{width:90vw;max-width:250px;height:40vw;max-height:250px;}}
+    @media (max-width:600px){#bulkTable th,#bulkTable td{font-size:0.93rem;padding:4px;}.item-list{gap:12px;}.item{min-width:90vw;max-width:98vw;}.item-image{width:90vw;max-width:250px;height:40vw;max-height:250px;}}
   </style>
 </head>
 <body>
   <div class="top-bar">
-    <button class="admin-btn" id="showAdminBtn">Admin Use Only</button>
+    <button class="admin-btn" id="showBulkFormBtn">Admin Use Only</button>
     <h1 class="center-heading">Pint Sized Fashions Gallery</h1>
     <button class="order-form-btn" onclick="window.open('https://psfashions.github.io/PintSizedFashions/Order%20Form.html', '_blank')">ORDER FORM</button>
   </div>
-  <div class="admin-panel" id="adminPanel">
-    <h2>Admin: Edit Products</h2>
-    <form id="adminForm">
-      <table>
+  <div class="bulk-form-container" id="bulkFormContainer">
+    <h2>Admin: Bulk Add/Edit Products</h2>
+    <form id="bulkItemForm">
+      <table id="bulkTable">
         <thead>
           <tr>
-            <th>Image URL/Path</th>
+            <th>Image URL/Path<br><span style="font-weight:normal;font-size:0.9em;">(pasteable)</span></th>
             <th>Name</th>
             <th>Description</th>
             <th>Price</th>
             <th>Remove</th>
           </tr>
         </thead>
-        <tbody id="adminTableBody"></tbody>
+        <tbody>
+          <!-- Rows added dynamically -->
+        </tbody>
       </table>
-      <button type="button" class="add-row-btn" id="addAdminRowBtn">Add Row</button>
-      <button type="submit" class="save-btn">Update Products List (in browser)</button>
-      <button type="button" class="download-btn" id="downloadJsonBtn">Download Products JSON</button>
-      <button type="button" class="add-row-btn" id="closeAdminBtn">Close</button>
+      <button type="button" id="addRowBtn">Add Row</button>
+      <button type="submit">Save In Browser</button>
+      <button type="button" id="downloadJsonBtn">Download Products JSON</button>
+      <button type="button" id="cancelBulkBtn">Close</button>
     </form>
     <div style="color:#a03a7e;font-size:0.95em;margin-top:8px;">
-      <strong>Instructions:</strong> After updating, click "Download Products JSON" and upload the file to your repo.<br>
-      Images: Use full URLs or paths like <code>images/yourfile.jpg</code> (upload images to your repo!).
+      <strong>Instructions:</strong>
+      <ul style="margin-top:0">
+        <li>You can paste multiple rows/columns from Excel or Google Sheets directly into the table.</li>
+        <li>Click "Download Products JSON" and upload the file to your repo to update the public catalog.</li>
+        <li>Images: Use full URLs or paths like <code>images/yourfile.jpg</code> (upload images to your repo!).</li>
+      </ul>
     </div>
   </div>
   <div class="item-list" id="itemList"></div>
@@ -73,13 +77,13 @@
     const repoName = "Gallery"; // Change this if your repo name is not "Gallery"
 
     // --- ELEMENTS ---
-    const showAdminBtn = document.getElementById('showAdminBtn');
-    const adminPanel = document.getElementById('adminPanel');
-    const adminTableBody = document.getElementById('adminTableBody');
-    const addAdminRowBtn = document.getElementById('addAdminRowBtn');
-    const adminForm = document.getElementById('adminForm');
+    const showBulkFormBtn = document.getElementById('showBulkFormBtn');
+    const bulkFormContainer = document.getElementById('bulkFormContainer');
+    const bulkTableBody = document.querySelector('#bulkTable tbody');
+    const addRowBtn = document.getElementById('addRowBtn');
+    const bulkItemForm = document.getElementById('bulkItemForm');
     const downloadJsonBtn = document.getElementById('downloadJsonBtn');
-    const closeAdminBtn = document.getElementById('closeAdminBtn');
+    const cancelBulkBtn = document.getElementById('cancelBulkBtn');
     const itemList = document.getElementById('itemList');
 
     // --- STATE ---
@@ -144,36 +148,31 @@
       });
     }
 
-    // --- ADMIN PANEL & TABLE RENDER ---
-    function renderAdminTable() {
-      adminTableBody.innerHTML = '';
-      if (!items.length) addAdminRow();
-      items.forEach((item, idx) => addAdminRow(item, idx));
-    }
-
-    function addAdminRow(item = {}, idx = null) {
+    // --- BULK ADD FUNCTIONALITY ---
+    function createBulkRow(item = {}) {
       const row = document.createElement('tr');
-      // Image URL/Path
+      // Image URL/Path input (pasteable)
       const imageCell = document.createElement('td');
       const imageInput = document.createElement('input');
       imageInput.type = 'text';
+      imageInput.placeholder = 'Paste image URL or path';
       imageInput.value = item.imageUrl || '';
       imageCell.appendChild(imageInput);
-      // Name
+      // Name input
       const nameCell = document.createElement('td');
       const nameInput = document.createElement('input');
       nameInput.type = 'text';
       nameInput.required = true;
       nameInput.value = item.name || '';
       nameCell.appendChild(nameInput);
-      // Desc
+      // Desc input
       const descCell = document.createElement('td');
       const descInput = document.createElement('input');
       descInput.type = 'text';
       descInput.required = true;
       descInput.value = item.description || '';
       descCell.appendChild(descInput);
-      // Price
+      // Price input
       const priceCell = document.createElement('td');
       const priceInput = document.createElement('input');
       priceInput.type = 'number';
@@ -196,34 +195,30 @@
       row.appendChild(descCell);
       row.appendChild(priceCell);
       row.appendChild(removeCell);
-      adminTableBody.appendChild(row);
+      return row;
     }
 
-    // --- ADMIN PANEL EVENTS ---
-    showAdminBtn.addEventListener('click', function() {
-      if (!formUnlocked) {
-        const entered = prompt("Enter password to access admin panel:");
-        if (entered === PASSWORD) {
-          formUnlocked = true;
-        } else {
-          alert("Incorrect password!");
-          return;
-        }
+    function resetBulkForm() {
+      bulkTableBody.innerHTML = '';
+      if (!items.length) {
+        bulkTableBody.appendChild(createBulkRow());
+      } else {
+        items.forEach(item => {
+          bulkTableBody.appendChild(createBulkRow(item));
+        });
       }
-      adminPanel.classList.add('active');
-      renderAdminTable();
+    }
+
+    addRowBtn.addEventListener('click', function() {
+      bulkTableBody.appendChild(createBulkRow());
     });
-    closeAdminBtn.addEventListener('click', function() {
-      adminPanel.classList.remove('active');
-    });
-    addAdminRowBtn.addEventListener('click', function() {
-      addAdminRow();
-    });
-    // Save/Update in browser only (not persistent for all users)
-    adminForm.addEventListener('submit', function(e) {
+
+    bulkItemForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      const rows = Array.from(bulkTableBody.querySelectorAll('tr'));
+      if (!rows.length) return;
       items = [];
-      Array.from(adminTableBody.querySelectorAll('tr')).forEach(row => {
+      rows.forEach(row => {
         const [imgInput, nameInput, descInput, priceInput] = row.querySelectorAll('input');
         const imageUrl = imgInput.value.trim();
         const name = nameInput.value.trim();
@@ -233,11 +228,11 @@
           items.push({ name, description, price, imageUrl });
         }
       });
-      renderAdminTable();
+      localStorage.setItem('psf_items', JSON.stringify(items));
       renderItems();
       alert("Products updated in browser. Click 'Download Products JSON' and upload to your repo to make products visible to everyone.");
     });
-    // Download products.json
+
     downloadJsonBtn.addEventListener('click', function() {
       const dataStr = JSON.stringify(items, null, 2);
       const blob = new Blob([dataStr], {type: "application/json"});
@@ -249,6 +244,61 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    });
+
+    cancelBulkBtn.addEventListener('click', function() {
+      bulkFormContainer.style.display = 'none';
+    });
+
+    // Allow multi-row/col pasting (Excel/Sheets copy) into the table
+    bulkTableBody.addEventListener('paste', function(e) {
+      const clipboardData = (e.clipboardData || window.clipboardData);
+      const pastedData = clipboardData.getData('text');
+      if (!pastedData) return;
+      const startCell = document.activeElement;
+      if (!startCell || startCell.tagName !== 'INPUT') return;
+      // Find starting position
+      let startRowElem = startCell.closest('tr');
+      let allRows = Array.from(bulkTableBody.querySelectorAll('tr'));
+      let rowIdx = allRows.indexOf(startRowElem);
+      let cellIdx = Array.from(startRowElem.querySelectorAll('input')).indexOf(startCell);
+      // Parse grid
+      const rows = pastedData.trim().split('\n').map(row => row.split('\t'));
+      // For each row in the paste data
+      for (let r = 0; r < rows.length; r++) {
+        let currentRow = bulkTableBody.querySelectorAll('tr')[rowIdx + r];
+        // If not enough rows, add rows
+        if (!currentRow) {
+          currentRow = createBulkRow();
+          bulkTableBody.appendChild(currentRow);
+        }
+        const cells = Array.from(currentRow.querySelectorAll('input[type="text"],input[type="number"]'));
+        for (let c = 0; c < rows[r].length && (cellIdx + c) < 4; c++) {
+          // Only fill the first 4 cells (imageURL, name, desc, price)
+          let val = rows[r][c];
+          if (cells[cellIdx + c]) {
+            cells[cellIdx + c].value = cells[cellIdx + c].type === "number"
+              ? val.replace(/[^0-9.]/g, '')
+              : val;
+          }
+        }
+      }
+      e.preventDefault();
+    });
+
+    // --- ADMIN PANEL EVENTS ---
+    showBulkFormBtn.addEventListener('click', function() {
+      if (!formUnlocked) {
+        const entered = prompt("Enter password to access admin panel:");
+        if (entered === PASSWORD) {
+          formUnlocked = true;
+        } else {
+          alert("Incorrect password!");
+          return;
+        }
+      }
+      bulkFormContainer.style.display = 'block';
+      resetBulkForm();
     });
 
     // --- INITIALIZE ---
