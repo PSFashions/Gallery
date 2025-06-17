@@ -30,6 +30,24 @@
     .order-btn{background:#a03a7e;color:#fff;border:none;padding:8px 20px;border-radius:5px;font-size:1rem;cursor:pointer;margin-top:4px;transition:background 0.2s;}
     .order-btn:hover{background:#7c2d61;}
     @media (max-width:600px){#bulkTable th,#bulkTable td{font-size:0.93rem;padding:4px;}.item-list{gap:12px;}.item{min-width:90vw;max-width:98vw;}.item-image{width:90vw;max-width:250px;height:40vw;max-height:250px;}}
+    /* Promo Banner Styles */
+    .promo-banner {
+      background: linear-gradient(90deg, #ffb703 0%, #ff61a6 100%);
+      color: #7c2d61;
+      font-family: 'Fredoka One', cursive, sans-serif;
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 18px 8px 14px 8px;
+      margin: 0 0 18px 0;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 3px 10px #ffb70333;
+      letter-spacing: 1px;
+      z-index: 2;
+      position: relative;
+    }
+    @media (max-width: 600px) {
+      .promo-banner { font-size: 1.1rem; padding: 12px 6px 10px 6px; }
+    }
   </style>
 </head>
 <body>
@@ -38,6 +56,11 @@
     <h1 class="center-heading">Pint Sized Fashions Gallery</h1>
     <button class="order-form-btn" onclick="window.open('https://psfashions.github.io/PintSizedFashions/Order%20Form.html', '_blank')">ORDER FORM</button>
   </div>
+  <!-- Promo Banner Start -->
+  <div class="promo-banner">
+    🎉 <strong>25% off displayed prices this week only!</strong> 🎉
+  </div>
+  <!-- Promo Banner End -->
   <div class="bulk-form-container" id="bulkFormContainer">
     <h2>Admin: Bulk Add/Edit Products</h2>
     <form id="bulkItemForm">
